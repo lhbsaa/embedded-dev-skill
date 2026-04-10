@@ -1,0 +1,9 @@
+# GUI Visual Feedback Dependencies
+# Install: pip install -r requirements.txt
+
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Optional for advanced features
+# pillow>=10.0.0        # Additional image processing
+# scikit-image>=0.21.0  # Advanced similarity metrics (SSIM)

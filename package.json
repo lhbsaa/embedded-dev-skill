@@ -1,0 +1,62 @@
+{
+  "name": "embedded-dev-skill",
+  "version": "3.0.0",
+  "description": "Embedded development skill for Pi Coding Agent - supports ESP32, STM32, RP2040, nRF52",
+  "keywords": [
+    "pi-package",
+    "pi-skill",
+    "embedded",
+    "embedded-systems",
+    "esp32",
+    "stm32",
+    "rp2040",
+    "nrf52",
+    "firmware",
+    "driver",
+    "iot",
+    "mcu"
+  ],
+  "author": "lhbsaa",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lhbsaa/embedded-dev-skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lhbsaa/embedded-dev-skill/issues"
+  },
+  "homepage": "https://github.com/lhbsaa/embedded-dev-skill#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
+    "@sinclair/typebox": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "build": "tsc extensions/*.ts --outDir dist --declaration",
+    "lint": "eslint extensions/*.ts",
+    "test": "echo 'No tests yet'"
+  },
+  "pi": {
+    "extensions": ["./extensions"],
+    "skills": ["./SKILL.md"],
+    "prompts": [],
+    "themes": []
+  },
+  "files": [
+    "SKILL.md",
+    "INSTALL.md",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "extensions/",
+    "references/",
+    "scripts/"
+  ]
+}
