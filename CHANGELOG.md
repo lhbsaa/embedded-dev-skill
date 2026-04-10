@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-04-10
+
+### Added
+- **Extensions**: 新增 `build-wrapper.ts` 扩展实现统一编译命令
+- **Documentation**: 新增 `Embedded-Build-Environment-AI-Interface.md` 编译环境 AI 接口探究文档
+
+### Changed
+- **SKILL.md**: 添加 build-wrapper 扩展说明
+- **Extension Tools**: 扩展工具表格新增 build_wrapper
+
 ## [3.0.0] - 2026-04-10
 
 ### Added
@@ -76,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| 3.1.0 | 2026-04-10 | Build Wrapper Extension + AI Interface Doc |
 | 3.0.0 | 2026-04-10 | Pi Edition - 完整适配 + 扩展 |
 | 2.2.0 | 2026-04-09 | Security Checklist + GUI Scripts |
 | 2.0.0 | 2026-04-08 | Progressive Loading Architecture |
