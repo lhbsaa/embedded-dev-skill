@@ -1,10 +1,12 @@
 {
   "name": "embedded-dev-skill",
-  "version": "3.0.0",
-  "description": "Embedded development skill for Pi Coding Agent - supports ESP32, STM32, RP2040, nRF52",
+  "version": "3.2.0",
+  "description": "Embedded development skill for Pi Coding Agent and OpenCode - supports ESP32, STM32, RP2040, nRF52 with cases, FAQ, serial monitor, and MCP server",
   "keywords": [
     "pi-package",
     "pi-skill",
+    "opencode-skill",
+    "opencode",
     "embedded",
     "embedded-systems",
     "esp32",
@@ -14,7 +16,9 @@
     "firmware",
     "driver",
     "iot",
-    "mcu"
+    "mcu",
+    "mcp",
+    "mcp-server"
   ],
   "author": "lhbsaa",
   "license": "MIT",
@@ -49,13 +53,22 @@
     "prompts": [],
     "themes": []
   },
+  "opencode": {
+    "skill": "./SKILL.md",
+    "mcpServer": "./adapters/opencode/mcp-server-embedded.py",
+    "references": "./references",
+    "scripts": "./scripts"
+  },
   "files": [
     "SKILL.md",
     "INSTALL.md",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
+    "COMPATIBILITY.md",
+    "VERSION_HISTORY.md",
     "extensions/",
+    "adapters/",
     "references/",
     "scripts/"
   ]

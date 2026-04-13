@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-04-13
+
+### Added
+- **Dual Platform Support**: 同时支持 Pi Coding Agent 和 OpenCode
+- **Real-World Cases**: 新增 `references/cases.md` - 6个实战案例
+  - ESP32-S3 LCD驱动内存溢出
+  - 格式字符串编译错误诊断
+  - UART缓冲区溢出安全漏洞
+  - LCD初始化重试机制失效
+  - 数据验证安全性不足
+  - 多任务堆栈溢出风险
+- **FAQ**: 新增 `references/faq.md` - 20个常见问题快速解答
+- **Serial Monitor**: 新增 `scripts/serial_monitor.py` - AI友好的串口监控
+  - ESP-IDF 日志格式解析
+  - 错误模式自动检测
+  - JSON 结构化输出
+- **PowerShell Monitor**: 新增 `scripts/serial_monitor.ps1` - Windows 备用脚本
+- **OpenCode Adapter**: 新增 `adapters/opencode/` 目录
+  - OpenCode 专用 SKILL.md
+  - MCP-GUIDE.md 配置指南
+  - mcp-server-embedded.py MCP Server 实现
+- **MCP Server**: Python MCP Server 实现
+  - `embedded_build` 统一编译命令
+  - `embedded_diagnose` 编译错误诊断
+
+### Changed
+- **SKILL.md**: 从 Pi 单平台升级到 Pi + OpenCode 双平台
+- **README.md**: 添加双平台说明和 OpenCode 安装指南
+- **COMPATIBILITY.md**: 大幅扩展 MCP 替代方案详细说明
+- **INSTALL.md**: 添加 OpenCode 安装方式
+- **VERSION_HISTORY.md**: 合并自用版本的质量评分系统
+- **package.json**: version 3.1 → 3.2, keywords 添加 opencode
+- **requirements.txt**: 添加 pyserial 依赖
+
+### Merged
+- 合并开源版本 (skills/embedded-dev) 与自用版本 (skills-a/embedded-dev)
+- 案例库已脱敏处理移除项目名称
+
 ## [3.1.0] - 2026-04-10
 
 ### Added
@@ -86,6 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| 3.2.0 | 2026-04-13 | Dual Platform + Cases + FAQ + Serial Monitor + MCP Server |
 | 3.1.0 | 2026-04-10 | Build Wrapper Extension + AI Interface Doc |
 | 3.0.0 | 2026-04-10 | Pi Edition - 完整适配 + 扩展 |
 | 2.2.0 | 2026-04-09 | Security Checklist + GUI Scripts |
