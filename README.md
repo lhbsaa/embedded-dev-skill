@@ -3,12 +3,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Pi Compatible](https://img.shields.io/badge/Pi-Compatible-green.svg)](https://github.com/badlogic/pi-mono)
 [![OpenCode Compatible](https://img.shields.io/badge/OpenCode-Compatible-blue.svg)](https://opencode.ai)
-[![Version](https://img.shields.io/badge/version-3.2-purple.svg)](https://github.com/lhbsaa/embedded-dev-skill)
+[![Version](https://img.shields.io/badge/version-3.3-purple.svg)](https://github.com/lhbsaa/embedded-dev-skill)
 
 AI辅助嵌入式系统开发的专项技能，支持 **Pi Coding Agent** 和 **OpenCode** 双平台。
 
+**v3.3.0 Superpowers Integration**: 借鉴 Superpowers 的强制门控机制，新增 Iron Law、Skill Chain、两阶段评审。
+
 ## 特性
 
+### 核心功能
 - **双平台支持**: Pi Coding Agent + OpenCode
 - **多芯片支持**: ESP32, STM32, RP2040, nRF52 系列
 - **硬件接口**: SPI, I2C, UART, GPIO, ADC, PWM 配置模板
@@ -17,9 +20,17 @@ AI辅助嵌入式系统开发的专项技能，支持 **Pi Coding Agent** 和 **
 - **串口监控**: AI友好的日志解析
 - **实战案例**: 6个真实项目案例分析
 - **FAQ**: 20个常见问题快速解答
-- **任务管理**: 内置 todo 扩展
-- **渐进式加载**: 核心轻量，按需加载详细文档
-- **跨平台**: Windows, Linux, macOS
+
+### v3.3.0 新增 (Superpowers Integration)
+- **Iron Law**: 编译优先验证强制门控
+- **Red Flags**: 12个停止信号 + 7个症状信号
+- **Rationalization Table**: 11个借口反驳表
+- **Verification Gate**: 5步验证流程
+- **Skill Chain**: 5阶段链式调用 (brainstorming → design → implementation → verification → gui-feedback)
+- **两阶段评审**: 硬件规范评审 + MISRA C 评审
+- **Hooks SessionStart**: 关键词触发自动注入上下文
+- **Prompt 模板分离**: driver-generator + hardware-validator + code-quality + debugging
+- **Token 效率优化**: workflow.md + examples.md 外部化加载
 
 ## 快速开始
 
@@ -78,14 +89,30 @@ cp embedded-dev-skill/adapters/opencode/mcp-server-embedded.py ~/.opencode/mcp/
 
 ```
 embedded-dev/
-├── SKILL.md                # 核心 Skill 定义 (双平台版)
+├── SKILL.md                # 核心 Skill 定义 (v3.3.0)
 ├── README.md               # GitHub 入口文档
 ├── INSTALL.md              # 安装说明 (Pi + OpenCode)
 ├── CHANGELOG.md            # 变更日志
 ├── VERSION_HISTORY.md      # 版本历程
 ├── COMPATIBILITY.md        # 多 Agent 兼容指南
+├── workflow.md             # 详细工作流 (P3 新增)
+├── examples.md             # 实战案例库 (P3 新增)
 ├── LICENSE                 # MIT 许可证
 ├── package.json            # Pi Package 配置
+├── hooks/                  # Session Hooks (P1 新增)
+│   ├── hooks.json          # 关键词触发配置
+│   └── session-start.cmd   # Windows 启动脚本
+├── prompts/                # Prompt 模板 (P1 新增)
+│   ├── driver-generator.md     # 驱动生成
+│   ├── hardware-validator.md   # 硬件规范评审
+│   ├── code-quality.md         # MISRA C 评审
+│   └── debugging.md            # 调试 Prompt
+├── skills/                 # Skill Chain (P2 新增)
+│   ├── embedded-brainstorming/SKILL.md
+│   ├── embedded-driver-design/SKILL.md
+│   ├── embedded-implementation/SKILL.md
+│   ├── embedded-verification/SKILL.md
+│   └── embedded-gui-feedback/SKILL.md
 ├── extensions/             # Pi 扩展
 │   ├── image-read.ts       # 图片读取
 │   ├── todo.ts             # 任务管理
@@ -106,13 +133,13 @@ embedded-dev/
 │   ├── remote-tools.md     # 远程调试
 │   ├── gui-feedback.md     # GUI 反馈
 │   ├── ai-patterns.md      # AI 集成
-│   ├── cases.md            # 实战案例 (NEW)
-│   └─ faq.md               # 常见问题 (NEW)
+│   ├── cases.md            # 实战案例
+│   └── faq.md              # 常见问题
 └── scripts/                # 辅助脚本 (5个)
     ├── camera_capture.py   # 摄像头捕获
     ├── image_compare.py    # 图像对比
-    ├── serial_monitor.py   # 串口监控 (NEW)
-    ├── serial_monitor.ps1  # PowerShell 监控 (NEW)
+    ├── serial_monitor.py   # 串口监控
+    ├── serial_monitor.ps1  # PowerShell 监控
     └── requirements.txt    # Python 依赖
 ```
 

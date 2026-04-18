@@ -1,7 +1,7 @@
 {
   "name": "embedded-dev-skill",
-  "version": "3.2.0",
-  "description": "Embedded development skill for Pi Coding Agent and OpenCode - supports ESP32, STM32, RP2040, nRF52 with cases, FAQ, serial monitor, and MCP server",
+  "version": "3.3.0",
+  "description": "Embedded development skill for Pi Coding Agent and OpenCode - supports ESP32, STM32, RP2040, nRF52 with Iron Law, Skill Chain, Two-Stage Review, Cases, FAQ, Serial Monitor, and MCP Server",
   "keywords": [
     "pi-package",
     "pi-skill",
@@ -18,7 +18,11 @@
     "iot",
     "mcu",
     "mcp",
-    "mcp-server"
+    "mcp-server",
+    "skill-chain",
+    "iron-law",
+    "verification-gate",
+    "misra-c"
   ],
   "author": "lhbsaa",
   "license": "MIT",
@@ -50,17 +54,23 @@
   "pi": {
     "extensions": ["./extensions"],
     "skills": ["./SKILL.md"],
+    "hooks": "./hooks",
     "prompts": [],
     "themes": []
   },
   "opencode": {
     "skill": "./SKILL.md",
+    "skills": "./skills",
     "mcpServer": "./adapters/opencode/mcp-server-embedded.py",
     "references": "./references",
-    "scripts": "./scripts"
+    "scripts": "./scripts",
+    "hooks": "./hooks",
+    "prompts": "./prompts"
   },
   "files": [
     "SKILL.md",
+    "workflow.md",
+    "examples.md",
     "INSTALL.md",
     "README.md",
     "LICENSE",
@@ -69,6 +79,9 @@
     "VERSION_HISTORY.md",
     "extensions/",
     "adapters/",
+    "hooks/",
+    "prompts/",
+    "skills/",
     "references/",
     "scripts/"
   ]

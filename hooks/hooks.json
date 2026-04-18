@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "embedded|hardware|driver|LCD|display|ESP32|STM32|RP2040|nRF52|sensor|firmware|SPI|I2C|UART|GPIO",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PLUGIN_ROOT}\\hooks\\session-start.cmd",
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}

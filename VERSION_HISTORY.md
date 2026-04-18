@@ -6,13 +6,135 @@
 
 ## 当前版本
 
-**Version**: 3.2.0  
-**Release Date**: 2026-04-13  
-**Codename**: Dual Platform Edition  
+**Version**: 3.3.0  
+**Release Date**: 2026-04-18  
+**Codename**: Superpowers Integration Edition  
 
 ---
 
 ## 版本历程
+
+### v3.3.0 - Superpowers Integration Edition (2026-04-18)
+
+**里程碑**: 借鉴 Superpowers (by Jesse Vincent) 的强制门控机制和模块化设计
+
+#### 新增 (P0 改进 - 强制门控)
+
+| 类别 | 内容 | 借鉴来源 |
+|------|------|----------|
+| **Iron Law** | 编译优先验证强制门控 | Superpowers TDD Iron Law |
+| **Red Flags** | 12个停止信号 + 7个症状信号 | Superpowers Red Flags |
+| **Rationalization Table** | 11个借口反驳表 | Superpowers Rationalization |
+| **Verification Gate** | 5步验证流程 + Claim Types 表 | Superpowers verification-before-completion |
+
+#### 新增 (P1 改进 - 模块化 + Hooks)
+
+| 类别 | 内容 | 借鉴来源 |
+|------|------|----------|
+| **Hooks SessionStart** | 自动注入嵌入式上下文 | Superpowers session-start |
+| **hooks/hooks.json** | 关键词触发配置 | Superpowers hooks.json |
+| **hooks/session-start.cmd** | Windows PowerShell 脚本 | 平台适配 |
+| **prompts/driver-generator.md** | 驱动代码生成 Prompt（含DMA约束） | Superpowers implementer-prompt |
+| **prompts/hardware-validator.md** | 硬件规范评审 Prompt | Superpowers spec-reviewer |
+| **prompts/code-quality.md** | MISRA C 质量评审 Prompt | Superpowers code-quality-reviewer |
+| **prompts/debugging.md** | 嵌入式调试 Prompt | Superpowers systematic-debugging |
+
+#### 变更
+
+| 类别 | 原内容 | 新内容 |
+|------|--------|--------|
+| Description | 包含 workflow 暗示 | 纯触发条件 + symptom 关键词 |
+| Phase 4 | 简单验证命令 | Verification Gate 5步流程 |
+| SKILL.md | 无 prompts 引用 | 添加 Prompts + Hooks 引用表格 |
+| 版本号 | v3.2.0 | v3.3.0 |
+
+#### 新增文件统计
+
+```
+hooks/: 2个 (hooks.json, session-start.cmd)
+prompts/: 4个 (driver-generator, hardware-validator, code-quality, debugging)
+```
+
+#### 设计理念
+
+Superpowers 核心概念借鉴：
+- **Iron Law**: "Violating the letter is violating the spirit" → 嵌入式编译强制
+- **Red Flags**: 停止信号列表 → 硬件开发危险信号
+- **Rationalization Table**: 借口反驳表 → 嵌入式开发常见借口
+- **Verification Gate**: 证据优先声明 → build-flash-monitor 强制验证
+- **Prompt 模板分离**: 实现者/评审者分离 → 两阶段评审（硬件规范 + MISRA C）
+- **Hooks SessionStart**: 自动上下文注入 → 嵌入式关键词触发
+
+#### 新增 (P2 改进 - Skill Chain 链式调用)
+
+| 类别 | 内容 | 借鉴来源 |
+|------|------|----------|
+| **Skill Chain** | 5个链式调用 skill | Superpowers brainstorming → writing-plans → implementation |
+| **embedded-brainstorming** | 硬件需求分析 + HARD-GATE | Superpowers brainstorming |
+| **embedded-driver-design** | 实现计划创建（不生成代码） | Superpowers writing-plans |
+| **embedded-implementation** | 代码执行 + 两阶段评审 | Superpowers subagent-driven-development |
+| **embedded-verification** | build-flash-monitor 强制验证 | Superpowers verification-before-completion |
+| **embedded-gui-feedback** | LCD 视觉分析 | embedded-dev 特色功能 |
+| **Two-Stage Review** | 硬件规范 + MISRA C | Superpowers spec-reviewer + code-quality-reviewer |
+
+#### 新增文件统计 (P2)
+
+```
+skills/: 5个 skill 目录
+  - embedded-brainstorming/SKILL.md
+  - embedded-driver-design/SKILL.md
+  - embedded-implementation/SKILL.md
+  - embedded-verification/SKILL.md
+  - embedded-gui-feedback/SKILL.md
+```
+
+#### Skill Chain 流程
+
+```
+brainstorming → driver-design → implementation → verification → gui-feedback
+     ↓              ↓               ↓               ↓               ↓
+  硬件确认       计划创建        代码+评审        编译验证        视觉分析
+```
+
+#### 设计理念 (P2)
+
+- **HARD-GATE**: 每个 skill 有强制门控，必须完成才能进入下一个
+- **明确调用**: skill 结束时明确调用下一个 skill
+- **No Code in Design Phase**: driver-design 只创建计划，不生成代码
+- **No Placeholders**: 计划中不能有 "TBD"、"TODO"、"implement later"
+- **Bite-Sized Tasks**: 每步一个动作，2-5分钟
+
+#### 新增 (P3 改进 - Token 效率优化)
+
+| 类别 | 内容 | 借鉴来源 |
+|------|------|----------|
+| **workflow.md** | 详细工作流拆分独立文件 | Superpowers Token 效率原则 |
+| **examples.md** | 7个实战案例独立文件 | Superpowers Examples 分离 |
+| **SKILL.md 精简** | 保留核心，链接外部文件 | Superpowers <200 words 目标 |
+
+#### 新增文件统计 (P3)
+
+```
+workflow.md: 详细6阶段工作流 + Verification Report模板 + Decision Tree
+examples.md: 7个实战案例 + Quick Reference
+```
+
+#### Token 效率对比
+
+| 文件 | P0-P2 版本 | P3 版本 | 减少 |
+|------|------------|---------|------|
+| SKILL.md | ~950行 | ~850行 | ~100行 |
+| Workflow | 内嵌 | 外部 workflow.md | 独立加载 |
+| Examples | 内嵌 | 外部 examples.md | 按需加载 |
+
+#### 设计理念 (P3)
+
+- **渐进式加载**: 核心 SKILL.md 精简，详细内容按需加载
+- **链接替代内嵌**: workflow.md 和 examples.md 外部链接
+- **Token 节省**: 核心文件减少 ~100 行，每次 session 节省 context
+- **按需深度**: 用户需要时才读取详细 workflow/examples
+
+---
 
 ### v3.2.0 - Dual Platform Edition (2026-04-13)
 

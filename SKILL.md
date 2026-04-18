@@ -1,19 +1,62 @@
 ---
 name: embedded-dev
-description: Guide for embedded systems development on ESP32, STM32, RP2040, nRF52 chips. Use this skill whenever the user mentions embedded systems, firmware development, MCU programming, hardware drivers, sensors, LCD displays, IMU devices, SPI/I2C/UART interfaces, compilation, debugging, remote monitoring, Wi-Fi/BLE/MQTT protocols, or needs help with driver code generation, GUI layout design, hardware configuration, or device programming. Make sure to use this skill even if the user doesn't explicitly mention 'embedded' but asks about hardware, sensors, displays, device drivers, microcontrollers, or IoT applications.
+description: Use when developing firmware on ESP32/STM32/RP2040/nRF52, experiencing DMA overflow, SPI timeout, LCD blank display, frame corruption, GPIO conflicts, sensor reading errors, Wi-Fi disconnect, or needing driver configuration, hardware debugging, display/GUI setup, protocol implementation, serial monitoring. Use even if user doesn't mention 'embedded' but asks about hardware, sensors, displays, microcontrollers, IoT, or device programming.
 license: MIT
 compatible-with: pi-coding-agent, opencode
 pi-version: ">=1.0.0"
 opencode-version: ">=1.0.0"
 ---
 
-# Embedded Development Skill (v3.2.0 - Dual Platform Edition)
+# Embedded Development Skill (v3.3.0 - Superpowers Integration Edition)
 
-**Current Version**: v3.2.0 | **Release Date**: 2026-04-13 | [Version History](VERSION_HISTORY.md)
+**Current Version**: v3.3.0 | **Release Date**: 2026-04-18 | [Version History](VERSION_HISTORY.md)
 
 AI辅助嵌入式系统开发的专项技能，支持驱动开发、UI设计、硬件调试、问题诊断。采用渐进式加载架构，核心指令保持在SKILL.md，详细规范存放在references目录。
 
+**v3.3.0 核心改进**: 借鉴 Superpowers 的强制门控机制，新增 Iron Law、Red Flags、Rationalization Table、Verification Gate，以及 Skill Chain 链式调用。
+
 **双平台支持**: 本 Skill 同时支持 **Pi Coding Agent** 和 **OpenCode**。
+
+---
+
+## Skill Chain (P2 新增)
+
+本 Skill 支持链式调用工作流，借鉴 Superpowers 的 skill 链架构：
+
+```
+embedded-brainstorming → embedded-driver-design → embedded-implementation → embedded-verification → embedded-gui-feedback
+        ↓                       ↓                       ↓                       ↓                       ↓
+    硬件需求分析            设计实现方案             代码生成+评审            编译烧录验证            LCD视觉分析
+```
+
+### Skill Chain 文件
+
+| Skill | 文件 | 用途 |
+|-------|------|------|
+| `embedded-brainstorming` | `skills/embedded-brainstorming/SKILL.md` | 硬件需求确认，设计批准 |
+| `embedded-driver-design` | `skills/embedded-driver-design/SKILL.md` | 创建实现计划（不生成代码） |
+| `embedded-implementation` | `skills/embedded-implementation/SKILL.md` | 执行计划 + 两阶段评审 |
+| `embedded-verification` | `skills/embedded-verification/SKILL.md` | build-flash-monitor 强制验证 |
+| `embedded-gui-feedback` | `skills/embedded-gui-feedback/SKILL.md` | LCD/GUI 视觉分析 |
+
+### 链式调用规则
+
+1. **HARD-GATE**: 每个 skill 有强制门控，必须完成才能进入下一个
+2. **明确调用**: skill 结束时必须明确调用下一个 skill
+3. **评审机制**: implementation 有两阶段评审（硬件规范 + MISRA C）
+4. **Iron Law**: verification 强制 build-flash-monitor 循环
+
+### 使用方式
+
+复杂项目使用 skill 链：
+```
+"帮我配置 ST7789 LCD 驱动"
+→ 自动触发 embedded-brainstorming
+→ 确认设计后进入 embedded-driver-design
+→ ...
+```
+
+简单任务直接使用主 SKILL.md 的 Phase 流程。
 
 ---
 
@@ -174,97 +217,30 @@ pip install -r scripts/requirements.txt
 
 ---
 
-## Workflow (Pi Edition)
+## Workflow Overview
 
-### Phase 1: Context Loading
-Use Pi's `read` tool to load AGENTS.md:
-```
-read AGENTS.md
-```
-- If AGENTS.md missing → Use `write` to create template with project info
-- Store key config in Pi session via `pi.appendEntry()`
+6阶段工作流：`Context → Planning → Generation → Verification → Visual → Completion`
 
-### Phase 2: Task Planning
-Use `todo_list` extension for task tracking:
-```
-todo_list action=add "Configure SPI driver"
-todo_list action=list
-```
-- Simple task → Execute directly
-- Complex task → Decompose into subtasks
+**详细流程见:** `workflow.md`
 
-### Phase 3: Code Generation
-Use Pi tools for code operations:
-```
-read src/driver.c          # 读取现有代码
-write src/driver_new.c     # 创建新文件
-edit src/driver.c          # 修改代码
-```
-- Check references/ for detailed specs
-- Apply modular architecture patterns
+| Phase | Pi Command | OpenCode Command |
+|-------|------------|------------------|
+| 1. Context | `read AGENTS.md` | `read AGENTS.md` |
+| 2. Planning | `todo_list` | `todowrite` |
+| 3. Generation | `write/edit` | `write/edit` |
+| 4. Verification | `idf.py build flash monitor` | `idf.py build flash monitor` |
+| 5. Visual | `image_read` | `read screenshot` |
+| 6. Completion | `edit AGENTS.md` | `edit AGENTS.md` |
 
-### Phase 4: Verification
-Use Pi's `bash` tool for build-flash-monitor loop:
+**Verification Gate (强制):**
 ```
-bash: idf.py build
-bash: idf.py -p COM3 flash monitor
-```
-- On Error → Analyze output → Fix → Retry
-- Use `/tree` to navigate to previous working state
-
-### Phase 5: Visual Feedback (GUI)
-Use `image_read` extension for LCD analysis:
-```
-bash: python scripts/camera_capture.py --session
-image_read screenshots/capture_xxx.png
-```
-- Analyze layout, font, color issues
-- Apply fixes → Re-verify
-
-### Phase 6: Completion
-Update AGENTS.md and save to Pi session:
-```
-edit AGENTS.md  # Update findings
-```
-Use Pi's session tree to save checkpoints:
-- Press Escape twice → `/tree` → Navigate → Shift+L to label
-
----
-
-## Workflow (OpenCode Edition)
-
-### Phase 1: Context Loading
-```
-read AGENTS.md
+IDENTIFY → RUN → READ → VERIFY → CLAIM
 ```
 
-### Phase 2: Task Planning
-```
-todowrite todos=[{"content": "Configure SPI driver", "status": "pending", "priority": "high"}]
-```
-
-### Phase 3: Code Generation
-```
-read src/driver.c
-write src/driver_new.c
-edit src/driver.c
-```
-
-### Phase 4: Verification
-```
-bash: idf.py build
-bash: idf.py -p COM3 flash monitor
-```
-
-### Phase 5: Visual Feedback (GUI)
-```
-bash: python scripts/camera_capture.py --session
-bash: python scripts/serial_monitor.py -p COM4 -d 30
-```
-
-### Phase 6: Completion
-```
-edit AGENTS.md
+**Platform Commands:**
+```yaml
+Windows: idf.py -p COM3 flash; if($?) {monitor}
+Linux/macOS: idf.py -p /dev/ttyUSB0 flash monitor
 ```
 
 ---
@@ -461,6 +437,31 @@ idf.py -p /dev/cu.usbserial-110 flash monitor
 
 ---
 
+## The Iron Law
+
+```
+NO CODE WITHOUT COMPILATION-FIRST VERIFICATION
+```
+
+Write code without building? Delete it. Start over.
+
+**No exceptions:**
+- Don't skip `idf.py build` step
+- Don't assume configuration works without testing
+- Don't claim completion without flash+monitor loop
+- Verify means run the actual command
+
+**Violating the letter of this process is violating the spirit of embedded development.**
+
+This applies to:
+- Driver configuration changes
+- Hardware initialization code
+- GUI/display updates
+- Protocol implementations
+- Any code that touches hardware
+
+---
+
 ## Core Principles
 
 ### 1. Compile-Flash-Monitor-Test Loop
@@ -504,69 +505,65 @@ Three-layer design:
 
 ---
 
-## Examples
+## Red Flags - STOP and Verify
 
-### Example 1: LCD Driver
+If you catch yourself thinking:
+- "直接改寄存器试试" → Read datasheet first
+- "编译成功就算完成" → Run flash+monitor loop
+- "GUI看起来没问题" → Use camera_capture for verification
+- "这个参数应该可以" → Check chip specifications
+- "DMA应该能处理更多" → ESP32-S3 limit is 4092 bytes
+- "一次改多个配置" → Change one thing at a time
+- "不需要读数据手册" → Datasheet is mandatory
+
+**ALL of these mean: STOP. Run `idf.py build`. Then `idf.py flash monitor`.**
+
+### Symptom-based Red Flags
+- LCD blank → Check initialization sequence, verify data transfer
+- Display glitch → DMA buffer overflow suspected (check ≤4092)
+- SPI timeout → Check clock polarity and DMA alignment
+- Random crash → Check stack size, look for memory corruption
+- I2C no response → Check pull-up resistors, verify address
+- Wi-Fi disconnect → Check power supply stability
+- Sensor reading wrong → Check calibration data, verify interface
+
+---
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to verify" | Simple code breaks. Build takes 10 seconds. |
+| "I'll verify after" | Compilation pass ≠ runtime correct. |
+| "Already manually tested" | Manual ≠ reproducible. No record, can't re-run. |
+| "GUI looks fine to me" | Human eye misses timing/alignment issues. Use camera. |
+| "Parameter should work" | "Should" ≠ proven. Datasheet specifies, not assumption. |
+| "Just change register" | Blind changes damage hardware. Read datasheet first. |
+| "DMA can handle more" | ESP32-S3 limit is 4092. Overflow causes corruption. |
+| "Skip flash this time" | Skipping becomes habit → bugs slip through. |
+| "Modify multiple at once" | Can't isolate which change caused issue. |
+| "Trust the template code" | Templates are starting points. Verify with your hardware. |
+| "This is different because..." | The Iron Law has no exceptions. Build first, always. |
+
+---
+
+## Examples Overview
+
+**详细案例见:** `examples.md`
+
+| Case | Task | Key Check |
+|------|------|-----------|
+| LCD Driver | Configure ST7789, SPI | DMA ≤4092, visual verification |
+| Wi-Fi Setup | Connect to AP | Monitor shows "Connected" |
+| Debug Blank Screen | Fix LCD display | Pi Session Tree /tree |
+| Format String | uint32_t printf | Use PRIu32 or %lu |
+| DMA Overflow | Large data transfer | Chunked transfer |
+| IMU Sensor | I2C read | Correct sensor data |
+| MQTT | Publish data | Message delivery |
+
+**Common Workflow Pattern:**
 ```
-User: "Configure ST7789 LCD, 240×240, SPI"
-
-Steps:
-1. read AGENTS.md → check constraints
-2. Load references/chips.md → ESP32-S3 SPI config
-3. Generate driver code:
-   write src/lcd_st7789.c
-   write include/lcd_st7789.h
-4. bash: idf.py build
-5. bash: idf.py -p COM3 flash monitor
-6. Visual feedback:
-   bash: python scripts/camera_capture.py --session
-   image_read screenshots/capture_xxx.png (Pi)
-   # 或直接 read screenshots/capture_xxx.png (OpenCode)
-7. Adjust if needed → Re-verify
-```
-
-### Example 2: Wi-Fi Setup
-```
-User: "Connect to Wi-Fi AP"
-
-Steps:
-1. Load references/protocols.md → Wi-Fi section
-2. Configure STA mode, SSID, password:
-   read main/wifi_config.c
-   edit main/wifi_config.c
-3. Add event handlers for connection
-4. bash: idf.py build flash monitor
-5. Test connectivity
-```
-
-### Example 3: Debugging with Pi Session Tree
-```
-User: "LCD shows nothing after flash"
-
-Steps:
-1. Analyze monitor output from bash command
-2. Check SPI initialization logs
-3. Verify pin assignments: read src/lcd.c
-4. Check backlight control
-5. Apply fix: edit src/lcd.c
-6. Verify: bash: idf.py build flash monitor
-7. If still broken, use Pi's session tree:
-   - Press Escape twice → /tree
-   - Navigate to earlier working version
-   - /fork to create new branch
-   - Try different fix approach
-```
-
-### Example 4: Quick Troubleshooting with FAQ
-```
-User: "编译提示格式字符串错误"
-
-Steps:
-1. read references/faq.md → Q1: uint32_t 格式字符串错误
-2. 检查类型定义差异
-3. 使用 %lu 或 PRIu32 宏
-4. bash: idf.py build
-5. Verify compilation success
+read AGENTS.md → Load references → Generate code → Verify → Visual check → Update memory
 ```
 
 ---
@@ -588,6 +585,49 @@ For detailed specifications, read the following reference files:
 | `references/ai-patterns.md` | Agent patterns, skill universality | AI integration |
 | `references/cases.md` | Real-world case studies, problem diagnosis | Learning from examples |
 | `references/faq.md` | Common problems and solutions | Quick troubleshooting |
+
+---
+
+## Prompt Templates
+
+For subagent-driven development, use the following prompt templates:
+
+| Prompt | Purpose | Review Stage |
+|---------|---------|--------------|
+| `prompts/driver-generator.md` | Generate driver code with DMA constraints | Implementation |
+| `prompts/hardware-validator.md` | Validate hardware specs (DMA <= 4092, interface config) | Stage 1 Review |
+| `prompts/code-quality.md` | MISRA C compliance, DRY/YAGNI check | Stage 2 Review |
+| `prompts/debugging.md` | Systematic root cause analysis | Debugging |
+
+**Two-Stage Review Process:**
+```
+Implementation → Hardware Validator → Code Quality Reviewer → Commit
+```
+
+---
+
+## Hooks
+
+Session start hooks inject embedded development context automatically:
+
+| Hook | Trigger Keywords | Function |
+|------|------------------|----------|
+| `hooks/hooks.json` | embedded, hardware, driver, LCD, ESP32, STM32, sensor | Hook configuration |
+| `hooks/session-start.cmd` | - | Windows PowerShell session context injection |
+
+**Hook Configuration:**
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "embedded|hardware|driver|LCD|ESP32...",
+        "hooks": [{ "type": "command", "command": "session-start.cmd" }]
+      }
+    ]
+  }
+}
+```
 
 ---
 

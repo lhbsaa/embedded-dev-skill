@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-04-18
+
+### Added - Superpowers Integration
+
+借鉴 [Superpowers](https://github.com/obra/superpowers) (by Jesse Vincent) 的强制门控机制和模块化设计。
+
+#### P0: 强制门控机制
+- **Iron Law**: 编译优先验证强制门控 - `NO CODE WITHOUT BUILD-FIRST VERIFICATION`
+- **Red Flags**: 12个停止信号 + 7个症状信号 - 硬件开发危险信号列表
+- **Rationalization Table**: 11个借口反驳表 - 嵌入式开发常见借口及反驳
+- **Verification Gate**: 5步验证流程 + Claim Types 表格 - 证据优先声明
+
+#### P1: Hooks + Prompts 分离
+- **Hooks SessionStart**: 关键词触发自动注入嵌入式上下文
+- **hooks/hooks.json**: 嵌入式关键词触发配置
+- **hooks/session-start.cmd**: Windows PowerShell 启动脚本
+- **prompts/driver-generator.md**: 驱动代码生成 Prompt（含 DMA 约束模板）
+- **prompts/hardware-validator.md**: 硬件规范评审 Prompt（DMA ≤4092 检查）
+- **prompts/code-quality.md**: MISRA C 质量评审 Prompt
+- **prompts/debugging.md**: 嵌入式调试 Prompt（4阶段系统调试）
+
+#### P2: Skill Chain 链式调用
+- **skills/embedded-brainstorming/**: 硬件需求分析 + HARD-GATE
+- **skills/embedded-driver-design/**: 实现计划创建（不生成代码）
+- **skills/embedded-implementation/**: 代码执行 + 两阶段评审
+- **skills/embedded-verification/**: build-flash-monitor 强制验证
+- **skills/embedded-gui-feedback/**: LCD 视觉分析
+- **Two-Stage Review**: 硬件规范评审 + MISRA C 评审流程
+
+#### P3: Token 效率优化
+- **workflow.md**: 详细6阶段工作流独立文件（Verification Report 模板）
+- **examples.md**: 7个实战案例独立文件
+- **SKILL.md 精简**: 保留核心，链接外部文件
+
+### Changed
+- **SKILL.md**: 
+  - Description 优化为纯触发条件 + symptom 关键词
+  - Phase 4 Verification 改为 Verification Gate 5步流程
+  - 新增 Skill Chain 引用、Prompts/Hooks 引用表格
+  - Workflow/Examples 部分精简，链接外部文件
+- **VERSION_HISTORY.md**: 添加 P0-P3 详细改进记录
+
+### Design Philosophy
+借鉴 Superpowers 核心概念：
+- **Iron Law**: "Violating the letter is violating the spirit" → 嵌入式编译强制
+- **HARD-GATE**: 每个 skill 有强制门控
+- **No Code in Design Phase**: driver-design 只创建计划
+- **No Placeholders**: 计划中不能有 TBD/TODO
+- **Two-Stage Review**: 规范合规 + 代码质量 → 硬件规范 + MISRA C
+
+### Files Added
+```
+hooks/: 2 files
+prompts/: 4 files  
+skills/: 5 skill directories
+workflow.md: 1 file
+examples.md: 1 file
+Total: 13 new files
+```
+
 ## [3.2.0] - 2026-04-13
 
 ### Added
