@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create release package
+        run: |
+          mkdir -p release/embedded-dev
+          # Copy core files
+          cp SKILL.md README.md CHANGELOG.md VERSION_HISTORY.md \
+             INSTALL.md CONTRIBUTING.md LICENSE package.json \
+             release/embedded-dev/ 2>/dev/null || true
+          # Copy directories
+          cp -r hooks prompts skills references scripts extensions adapters \
+             release/embedded-dev/ 2>/dev/null || true
+          # Copy docs if exists
+          cp -r docs release/embedded-dev/ 2>/dev/null || true
+          # Create zip
+          cd release
+          zip -r ../embedded-dev-skill-${{ steps.version.outputs.VERSION }}.zip embedded-dev
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          # Extract changelog for this version
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          if [ -f CHANGELOG.md ]; then
+            # Get the section for this version
+            sed -n "/^## ${VERSION}/,/^## /p" CHANGELOG.md | head -n -1 > release_notes.txt
+            echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+            cat release_notes.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "NOTES=Release ${VERSION}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Embedded Dev Skill ${{ steps.version.outputs.VERSION }}
+          body: ${{ steps.notes.outputs.NOTES }}
+          files: embedded-dev-skill-${{ steps.version.outputs.VERSION }}.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-package
+          path: embedded-dev-skill-${{ steps.version.outputs.VERSION }}.zip
+          retention-days: 30
