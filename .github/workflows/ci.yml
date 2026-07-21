@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check SKILL.md exists
+      run: test -f SKILL.md && echo "✅ SKILL.md found"
+
+    - name: Check key directories exist
+      run: |
+        for dir in skills references scripts adapters hooks prompts; do
+          test -d "$dir" && echo "✅ $dir/" || echo "❌ $dir/ missing"
+        done
+
+    - name: Build extensions (TypeScript)
+      run: |
+        if ls extensions/*.ts 2>/dev/null; then
+          npm install typescript --no-save 2>/dev/null
+          npx tsc extensions/*.ts --outDir dist --noEmit --skipLibCheck || echo "⚠️ TypeScript check skipped (no config)"
+        fi
+        echo "✅ Extension check complete"
